@@ -18,14 +18,21 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+// companies plugin libraries
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
+use Illuminate\Support\Facades\Auth;
+use Wallo\FilamentCompanies\Pages\User\PersonalAccessTokens;
+use Wallo\FilamentCompanies\Pages\User\Profile;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->default()
-            ->id('')
-            ->path('')
+            ->id('admin')
+            ->path('admin')
             ->login()
             ->colors([
                 'primary' => Color::Green
@@ -34,6 +41,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 // Pages\Dashboard::class,
+                Profile::class,
+                PersonalAccessTokens::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -53,6 +62,24 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+
+            // companies plugin panels
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->label('Profile')
+                    ->icon('heroicon-o-user-circle')
+                    ->url(static fn () => url(Profile::getUrl())),
+                MenuItem::make()
+                    ->label('Company')
+                    ->icon('heroicon-o-building-office')
+                    ->url(static fn () => url(Pages\Dashboard::getUrl(panel: 'company', tenant: Auth::user()->personalCompany()))),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Personal Access Tokens')
+                    ->label(static fn (): string => __('filament-companies::default.navigation.links.tokens'))
+                    ->icon('heroicon-o-key')
+                    ->url(static fn () => url(PersonalAccessTokens::getUrl())),
             ]);
     }
 }

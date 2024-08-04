@@ -1,19 +1,23 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Company\Pages;
 
 use App\Filament\Resources\HubResource\Widgets\HubStatsWidget;
 // use Illuminate\Contracts\View\View;
 // use Doctrine\DBAL\Schema\View;
 
-class Dashboard extends \Filament\Pages\Dashboard
+class DashboardCompany extends \Filament\Pages\Dashboard
 {
-    protected static string $resource = Dashboard::class;
+    protected static string $resource = DashboardCompany::class;
 
     protected static string $view = 'filament.pages.custom-map';
 
     public string $testData = 'Hello world';
-    
+
+    protected static string $routePath = 'dashboard';
+
+    protected static ?string $title = 'Company Dashboard';
+
     protected function getHeaderWidgets(): array
     {
 

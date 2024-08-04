@@ -2,28 +2,20 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
-use Wallo\FilamentCompanies\FilamentCompanies;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Wallo\FilamentCompanies\FilamentCompanies;
 
-class Hub extends Model
+class CompanyInvitation extends Model
 {
-    use HasFactory;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'latitude',
-        'longitude',
-        'connection',
-        'company_id',
-        'usage'
+        'email',
+        'role',
     ];
 
     /**

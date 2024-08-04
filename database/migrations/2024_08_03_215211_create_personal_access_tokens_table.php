@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hubs', function (Blueprint $table) {
+        Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
+            $table->morphs('tokenable');
             $table->string('name');
-            $table->string('latitude');
-            $table->string('longitude');
-            $table->integer('connection');
-            $table->float('usage');
-            $table->foreignId('company_id')->nullable();
+            $table->string('token', 64)->unique();
+            $table->text('abilities')->nullable();
+            $table->timestamp('last_used_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hubs');
+        Schema::dropIfExists('personal_access_tokens');
     }
 };
