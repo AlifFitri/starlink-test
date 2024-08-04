@@ -15,10 +15,9 @@ class HubStatsWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        // Get the current panel
+        // Get the current panel & tenant id
         $panelID = Filament::getCurrentPanel()->getId();
         $tenantID = $panelID != 'admin' ? Filament::getTenant()->id : null;
-        Log::info($panelID);
 
         $totalUsage = Hub::when($tenantID, function ($query, $tenantID) {
             return $query->where('company_id', $tenantID);

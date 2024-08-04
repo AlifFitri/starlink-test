@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Company\Pages\CompanyDashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -73,7 +74,7 @@ class AdminPanelProvider extends PanelProvider
                 MenuItem::make()
                     ->label('Company')
                     ->icon('heroicon-o-building-office')
-                    ->url(static fn () => url(Pages\Dashboard::getUrl(panel: 'company', tenant: Auth::user()->personalCompany()))),
+                    ->url(static fn () => url(CompanyDashboard::getUrl(panel: 'company', tenant: Auth::user()->personalCompany()))),
             ])
             ->navigationItems([
                 NavigationItem::make('Personal Access Tokens')

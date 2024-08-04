@@ -1,28 +1,18 @@
 @php
- $data = $this->testData;
- $initialMarkers = [
-            [
-                'position' => [
-                    'lat' => 28.625485,
-                    'lng' => 79.821091
-                ],
-                'draggable' => true
-            ],
-            [
-                'position' => [
-                    'lat' => 28.625293,
-                    'lng' => 79.817926
-                ],
-                'draggable' => false
-            ],
-            [
-                'position' => [
-                    'lat' => 28.625182,
-                    'lng' => 79.81464
-                ],
-                'draggable' => true
-            ]
-        ];
+$urlPrefix = $this->hubURLPrefix;
+ // Convert to the desired format
+$initialMarkers = array_map(function ($grid) {
+    return [
+        'id' => $grid['id'],
+        'position' => [
+            'lat' => (float) $grid['latitude'],
+            'lng' => (float) $grid['longitude'],
+        ],
+        'name' => $grid['name'],
+        'usage' => $grid['usage'].'TB',
+        'draggable' => false, // Set draggable based on your logic
+    ];
+}, $this->hubGrids);
 @endphp
 
 <style>
@@ -32,6 +22,7 @@
         #map {
             width: '100%';
             height: 400px;
+            z-index: 1;
         }
     </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -39,9 +30,9 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <x-filament-panels::page>
-    
+
     <!-- <h1 class='text-center'>Laravel Leaflet Maps</h1> -->
-    <div id='map' class='fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'></div>
+    <div id='map' class='relative p-6 bg-white shadow-sm fi-wi-stats-overview-stat rounded-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'></div>
 
 </x-filament-panels::page>
 
@@ -56,7 +47,13 @@
 
                 const data = initialMarkers[index];
                 const marker = generateMarker(data, index);
-                marker.addTo(map).bindPopup(`<b>${data.position.lat},  ${data.position.lng}</b>`);
+                marker.bindTooltip(`<a href="<?php echo $urlPrefix; ?>/${data.id}/edit"><b>${data.name}</b></a><br>${data.usage}`, {
+                                    permanent: true,
+                                    direction: 'right',
+                                    interactive: true,
+                                    opacity: 0.8
+                                }).openTooltip();
+                marker.addTo(map);
                 map.panTo(data.position);
                 markers.push(marker)
             }
@@ -78,8 +75,9 @@
 
         /* ------------------------ Handle Marker Click Event ----------------------- */
         function markerClicked($event, index) {
-            console.log(map);
-            console.log($event.latlng.lat, $event.latlng.lng);
+            const initialMarkers = <?php echo json_encode($initialMarkers); ?>;
+            const data = initialMarkers[index];
+            window.location.href = '<?php echo $urlPrefix; ?>/'+data.id+'/edit';
         }
 
         /* ----------------------- Handle Marker DragEnd Event ---------------------- */
@@ -97,13 +95,16 @@
                 },
                 zoom: 15
             });
-    
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(map);
-    
+
             map.on('click', mapClicked);
             initMarkers();
+
+            var group = new L.featureGroup(markers);
+            map.fitBounds(group.getBounds());
         }
         initMap();
     </script>

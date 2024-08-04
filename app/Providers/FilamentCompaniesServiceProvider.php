@@ -6,7 +6,6 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use App\Models\Company;
-// use App\Filament\Resources\HubResource;
 use Filament\PanelProvider;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
@@ -21,6 +20,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Wallo\FilamentCompanies\Pages\User\Profile;
 use App\Actions\FilamentCompanies\CreateNewUser;
 use App\Actions\FilamentCompanies\DeleteCompany;
+use App\Filament\Company\Pages\CompanyDashboard;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Wallo\FilamentCompanies\Pages\Auth\Register;
 use App\Actions\FilamentCompanies\SetUserPassword;
@@ -59,7 +59,7 @@ class FilamentCompaniesServiceProvider extends PanelProvider
             ->default()
             ->login(Login::class)
             ->passwordReset()
-            ->homeUrl(static fn (): string => url(Pages\Dashboard::getUrl(panel: 'company', tenant: Auth::user()?->personalCompany())))
+            ->homeUrl(static fn (): string => url(CompanyDashboard::getUrl(panel: 'company', tenant: Auth::user()?->personalCompany())))
             ->plugin(
                 FilamentCompanies::make()
                     ->userPanel('admin')
@@ -92,7 +92,7 @@ class FilamentCompaniesServiceProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Company/Resources'), for: 'App\\Filament\\Company\\Resources')
             ->discoverPages(in: app_path('Filament/Company/Pages'), for: 'App\\Filament\\Company\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // Pages\Dashboard::class,
             ])
             ->userMenuItems([
                 'profile' => MenuItem::make()
@@ -103,8 +103,8 @@ class FilamentCompaniesServiceProvider extends PanelProvider
             ->authGuard('web')
             ->discoverWidgets(in: app_path('Filament/Company/Widgets'), for: 'App\\Filament\\Company\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
